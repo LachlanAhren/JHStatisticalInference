@@ -1,0 +1,35 @@
+---
+title: "ToothGrowth Analysis"
+author: "Lachlan Maxwell"
+date: "August 19, 2014"
+output: pdf_document
+---
+
+A brief analysis of tooth growth in Guinea pigs.  The description of this dataset does not make it clear whether these can be considered paired observations or not.  As such, I'm assuming they aren't, to avoid drawing stronger conclusions than may be warranted.
+
+
+A few summary explorations and graphs shows a potential relationship between increasing dosage, as well a potential increase in growth for Orange Juice vs Ascorbic Acid
+```{r, echo=FALSE}
+data(ToothGrowth)
+library(ggplot2)
+ToothGrowth$dose = factor(ToothGrowth$dose, levels=c(0.5,1.0,2.0))
+```
+```{r}
+xtabs(len ~ dose + supp, data = ToothGrowth)
+```
+```{r,echo=FALSE}
+qplot(interaction(supp , dose),len, data=ToothGrowth,geom = "violin", xlab = "Supplement and Dose", ylab = "Length", fill = supp)
+```
+There is a good deal of variation of the density in the violin plot, and not a large sample of data, so it does not seem reasonable to assume equal variance
+
+A test for the straight hypothesis of orange juice vs ascorbic acid yields
+```{r}
+t.test(ToothGrowth[ToothGrowth$supp == "OJ",]$len, ToothGrowth[ToothGrowth$supp == "VC",]$len)$conf.int
+
+```
+As 0 is included in the confidence interval, and the t value is too small, we are unable to support this hypothesis
+
+For increased dosage, however, each increase in level results in a statistically significant increase in tooth growth.
+```{r}
+t.test(ToothGrowth[ToothGrowth$dose == 1.0,]$len, ToothGrowth[ToothGrowth$dose == 0.5,]$len)$conf.int
+t.test(ToothGrowth[ToothGrowth$dose == 2.0,]$len, ToothGrowth[ToothGrowth$dose == 1.0,]$len)$conf.int

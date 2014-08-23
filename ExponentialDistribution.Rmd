@@ -1,0 +1,78 @@
+---
+title: "Exponential Distribution"
+author: "Lachlan Maxwell"
+date: "August 18, 2014"
+output: pdf_document
+---
+
+Simulation and exploration of the Central Limit Theorem in regards to Exponential Distribution
+
+First we will simulate 1000 40 element exponential distributions, and calculate their means
+```{r, echo=TRUE}
+
+nosim <- 1000
+
+lambda <- .2
+n <- 40
+cfunc <- function(x, n) sqrt(n) * (x - (1/lambda)) / (1/lambda)
+AllMeans= NULL
+NormalizedMean= NULL
+AllSD = NULL
+for (i in seq(1,nosim,1)) {
+    x <- rexp(n, lambda)
+    sample_mean <- mean(x)
+    normalized_mean <- cfunc(sample_mean,n)
+    standard_deviation <- sd(x)
+    AllMeans=rbind(AllMeans,sample_mean)
+    NormalizedMean=rbind(NormalizedMean, normalized_mean)
+    
+}
+rownames(NormalizedMean) <- NULL
+data = data.frame(NormalizedMean)
+
+```
+```{r, echo=FALSE}
+theory_sample_mean_sd <- 1/sqrt(n) * (1/lambda)
+real_sample_mean_sd <- sd(AllMeans)
+sample_mean_mean <- mean(AllMeans)
+```
+The theoretical sample mean is:
+```{r, echo=FALSE}
+1/lambda
+```
+The actual population sample mean is:
+```{r,echo=FALSE}
+sample_mean_mean
+```
+The theoretical standard deviation of the sample mean is:
+```{r,echo=FALSE}
+theory_sample_mean_sd
+```
+The actual standard deviation of the sample mean is:
+```{r,echo=FALSE}
+library(ggplot2)
+real_sample_mean_sd
+```
+All of the actual values are reasonably close to the theoretical values, suggesting a sufficiently large number of simulations with a large enough number of samples per simulation
+The normalized mean has a distribution with approximately the same density as a normal distribution:
+```{r}
+g <- ggplot(data, aes(x = NormalizedMean)) + geom_histogram(alpha = .20, binwidth=.3, colour = "black", aes(y = ..density..)) 
+g <- g + stat_function(fun = dnorm, size = 2)
+print(g)
+```
+
+
+The percentage of sample means covered by the confidence interval for 1/lambda: X¯±1.96 * (S/sqrt(n) is
+```{r}
+ul <- mean(AllMeans) +  1.96 * real_sample_mean_sd
+ll <- mean(AllMeans) -  1.96 * real_sample_mean_sd
+inside <- 0
+for (i in AllMeans) {
+    if (i > ll & i < ul){
+        inside <- inside + 1
+    }
+}
+coverage <- inside/length(AllMeans)
+coverage
+```
+This is the expected result, given the number of samples
