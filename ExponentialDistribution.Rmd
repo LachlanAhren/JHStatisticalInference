@@ -54,6 +54,7 @@ library(ggplot2)
 real_sample_mean_sd
 ```
 All of the actual values are reasonably close to the theoretical values, suggesting a sufficiently large number of simulations with a large enough number of samples per simulation
+
 The normalized mean has a distribution with approximately the same density as a normal distribution:
 ```{r}
 g <- ggplot(data, aes(x = NormalizedMean)) + geom_histogram(alpha = .20, binwidth=.3, colour = "black", aes(y = ..density..)) 
@@ -76,3 +77,5 @@ coverage <- inside/length(AllMeans)
 coverage
 ```
 This is the expected result, given the number of samples
+
+For original Rmd visit the github repository at https://github.com/LachlanAhren/JHStatisticalInference/blob/master/ExponentialDistribution.Rmd

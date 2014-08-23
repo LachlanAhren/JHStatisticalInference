@@ -20,16 +20,24 @@ xtabs(len ~ dose + supp, data = ToothGrowth)
 ```{r,echo=FALSE}
 qplot(interaction(supp , dose),len, data=ToothGrowth,geom = "violin", xlab = "Supplement and Dose", ylab = "Length", fill = supp)
 ```
+
 There is a good deal of variation of the density in the violin plot, and not a large sample of data, so it does not seem reasonable to assume equal variance
 
-A test for the straight hypothesis of orange juice vs ascorbic acid yields
+A test for the hypothesis of orange juice increasing tooth growth more than ascorbic acid yields
 ```{r}
-t.test(ToothGrowth[ToothGrowth$supp == "OJ",]$len, ToothGrowth[ToothGrowth$supp == "VC",]$len)$conf.int
+t.test(ToothGrowth[ToothGrowth$supp == "OJ",]$len, ToothGrowth[ToothGrowth$supp == "VC",]$len)[c(1,4)]
 
 ```
 As 0 is included in the confidence interval, and the t value is too small, we are unable to support this hypothesis
 
 For increased dosage, however, each increase in level results in a statistically significant increase in tooth growth.
 ```{r}
-t.test(ToothGrowth[ToothGrowth$dose == 1.0,]$len, ToothGrowth[ToothGrowth$dose == 0.5,]$len)$conf.int
-t.test(ToothGrowth[ToothGrowth$dose == 2.0,]$len, ToothGrowth[ToothGrowth$dose == 1.0,]$len)$conf.int
+t.test(ToothGrowth[ToothGrowth$dose == 1.0,]$len, ToothGrowth[ToothGrowth$dose == 0.5,]$len)[c(1,4)]
+t.test(ToothGrowth[ToothGrowth$dose == 2.0,]$len, ToothGrowth[ToothGrowth$dose == 1.0,]$len)[c(1,4)]
+```
+
+Based on the data available, each increased level of dosage yields increased tooth growth.  
+
+Although the difference between orange juice and ascorbic acid can not be supported by the data, there is enough difference to suggest that an increased sample size would support the hypothesis
+
+For original Rmd file, visit the github repository at https://github.com/LachlanAhren/JHStatisticalInference/blob/master/ToothGrowth.Rmd
